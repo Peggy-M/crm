@@ -28,5 +28,17 @@
         }
         })
 
+        id
+        owner
+        name
+        startDate
+        endDate
+        cost
+        description
+        createTime
+        createBy
+        editTime
+        editBy
+
 </body>
 </html>
