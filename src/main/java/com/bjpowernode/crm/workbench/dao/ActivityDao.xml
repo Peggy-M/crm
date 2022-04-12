@@ -5,9 +5,29 @@
 
 <mapper namespace="com.bjpowernode.crm.workbench.dao.ActivityDao">
 
-    <select id="login" resultType="User">
-
-    </select>
+    <insert id="save" >
+insert into tbl_activity(
+        id,
+        owner,
+        name,
+        startDate,
+        endDate,
+        cost,
+        description,
+        createTime,
+        createBy
+)values (
+        #{id},
+        #{owner},
+        #{name},
+        #{startDate},
+        #{endDate},
+        #{cost},
+        #{description},
+        #{createTime},
+        #{createBy}
+        )
+    </insert>
 </mapper>
 
 

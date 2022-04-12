@@ -101,4 +101,11 @@ public class Activtiy {
     public void setEditBy(String editBy) {
         this.editBy = editBy;
     }
+
+    @Override
+    public String toString() {
+        return "Activtiy{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

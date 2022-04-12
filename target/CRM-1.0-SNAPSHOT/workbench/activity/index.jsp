@@ -19,9 +19,78 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 <script type="text/javascript">
 
 	$(function(){
-		
-		
+		//日历
+		$(".time").datetimepicker({
+			minView: "month",
+			language:  'zh-CN',
+			format: 'yyyy-mm-dd',
+			autoclose: true,
+			todayBtn: true,
+			pickerPosition: "bottom-left"
+		});
 
+		//为创建按钮绑定事件，打开添加操作的模态窗口
+		$("#addBtn").click(function (){
+			/*
+			* 操作模态窗口的方式
+			* 		需要操作的模态窗口的jquery对象，调用modal方法，为方法传递参数 show 打开模态窗口 hide 关闭模态窗口
+			*
+			* */
+			$.ajax({
+				url:"workbench/activity/gitUserList.do",
+				type:"get",
+				dataType:"json",
+				success:function (data){
+
+					var html="<option></option>";
+
+					$.each(data,function (i,n){
+						html+="<option value='"+n.id+"'>"+n.name+"</option>";
+					})
+					$("#create-owner").html(html);
+
+					var id="${user.id}";
+					$("#create-owner").val(id);
+
+					// show 打开模态窗口 hide 关闭模态窗口
+					$("#createActivityModal").modal("show");
+				}
+			})
+		})
+
+		//保存按提交信息
+		$("#saveBtn").click(function (){
+			/*
+			*
+			* */
+			$.ajax({
+				url:"workbench/activity/saveUser.do",
+				data:{
+					"owner" : $.trim($("#create-owner").val()),
+					"name" : $.trim($("#create-name").val()),
+					"startDate" : $.trim($("#create-startDate").val()),
+					"endDate" : $.trim($("#create-endDate").val()),
+					"cost" : $.trim($("#create-cost").val()),
+					"description" : $.trim($("#create-description").val())
+				},
+				type:"post",
+				dataType:"json",
+				success:function (data){
+					/*
+					* 返回一个值 判断是否添加成功
+					* {"success":ture/false}
+					* */
+					if(data.success){
+						// show 打开模态窗口 hide 关闭模态窗口
+						$("#createActivityModal").modal("hide");
+						$("#creatActivityModal")[0].reset();
+
+					}else{
+						alert("用户信息添加失败");
+					}
+				}
+			})
+		})
 	});
 	
 </script>
@@ -40,31 +109,29 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</div>
 				<div class="modal-body">
 				
-					<form class="form-horizontal" role="form">
+					<form class="form-horizontal" id="creatActivityModal" role="form">
 					
 						<div class="form-group">
 							<label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+								<select class="form-control" id="create-owner">
+
 								</select>
 							</div>
                             <label for="create-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="create-marketActivityName">
+                                <input type="text" class="form-control" id="create-name">
                             </div>
 						</div>
 						
 						<div class="form-group">
 							<label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-startTime">
+								<input type="text" class="form-control time" id="create-startDate" value="  —— 年  ——  月  ——  日"  readonly>
 							</div>
 							<label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-endTime">
+								<input type="text" class="form-control time" id="create-endDate" value="   —— 年  ——  月  ——  日"  readonly>
 							</div>
 						</div>
                         <div class="form-group">
@@ -77,7 +144,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						<div class="form-group">
 							<label for="create-describe" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="create-describe"></textarea>
+								<textarea class="form-control" rows="3" id="create-description"></textarea>
 							</div>
 						</div>
 						
@@ -85,8 +152,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					
 				</div>
 				<div class="modal-footer">
+
+					<!--
+						data-dismiss="modal"
+						表示关闭 市场活动模块
+					-->
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="saveBtn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -110,9 +182,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							<label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+
 								</select>
 							</div>
                             <label for="edit-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
@@ -124,7 +194,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						<div class="form-group">
 							<label for="edit-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-startTime" value="2020-10-10">
+								<input type="text" class="form-control" id="edit-startTime " value="2020-10-10">
 							</div>
 							<label for="edit-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
@@ -207,7 +277,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+				  <button type="button" class="btn btn-primary" id="addBtn" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>

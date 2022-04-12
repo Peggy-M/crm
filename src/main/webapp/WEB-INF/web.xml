@@ -53,11 +53,9 @@
   <servlet-mapping>
     <servlet-name>ActivityController</servlet-name>
     <url-pattern>/workbench/activity/gitUserList.do</url-pattern>
+    <url-pattern>/workbench/activity/saveUser.do</url-pattern>
   </servlet-mapping>
 
-
-
-  
 </web-app>
 
 

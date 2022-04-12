@@ -4,8 +4,15 @@ package com.bjpowernode.crm.workbench.web.controller;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.settings.service.UserService;
 import com.bjpowernode.crm.settings.service.impl.UserServiceImpl;
+import com.bjpowernode.crm.utils.DateTimeUtil;
 import com.bjpowernode.crm.utils.PrintJson;
 import com.bjpowernode.crm.utils.ServiceFactory;
+import com.bjpowernode.crm.utils.UUIDUtil;
+import com.bjpowernode.crm.workbench.domain.Activtiy;
+import com.bjpowernode.crm.workbench.service.ActivityServie;
+import com.bjpowernode.crm.workbench.service.impl.ActivityServiceImpl;
+import com.sun.glass.ui.android.Activity;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,11 +31,50 @@ public class ActivityController extends HttpServlet {
 
         if("/workbench/activity/gitUserList.do".equals(path)){
             gitUserList(request,response);
-        }else if("/settings/user/xxx.do".equals(path)){
-            //xxx(request,response)
+        }else if("/workbench/activity/saveUser.do".equals(path)){
+            saveUser(request,response);
         }
     }
+    //用户信息插入
+    private void saveUser(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("进入用户插入信息");
 
+        //随机生成一个id
+        String id= UUIDUtil.getUUID();
+        String owner=request.getParameter("owner");
+        String name=request.getParameter("name");
+        String startDate=request.getParameter("startDate");
+        String endDate=request.getParameter("endDate");
+        String cost=request.getParameter("cost");
+        String description=request.getParameter("description");
+        //修改时间是当前的系统的时间
+        String createTime= DateTimeUtil.getSysTime();
+        //创建人当前登录用户
+        String crearteBy= ((User) request.getSession().getAttribute("user")).getName();
+        System.out.println("当前的登录用户=========="+crearteBy);
+
+
+        Activtiy a= new Activtiy();
+        a.setId(id);
+        a.setOwner(owner);
+        a.setName(name);
+        a.setStartDate(startDate);
+        a.setEndDate(endDate);
+        a.setCost(cost);
+        a.setDescription(description);
+        a.setCreateTime(createTime);
+        a.setCreateBy(crearteBy);
+        System.out.println("插入的用户为===="+a);
+
+        ActivityServie as= (ActivityServie) ServiceFactory.getService(new ActivityServiceImpl());
+        boolean flag=as.save(a);
+
+
+        PrintJson.printJsonFlag(response,flag);
+
+
+    }
+    //用户信息列表
     private void gitUserList(HttpServletRequest request, HttpServletResponse response) {
         System.out.println("取得用户信息列表");
 
