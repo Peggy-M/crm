@@ -116,6 +116,10 @@ public class ActivityController extends HttpServlet {
        map.put("skipCount",skipCount);
        map.put("pageSize",pageSize);
 
+        System.out.println("skipCount===============>>"+skipCount);
+        System.out.println("pageSize===============>>"+pageSize);
+
+
        ActivityServie as= (ActivityServie) ServiceFactory.getService(new ActivityServiceImpl());
 
        /*

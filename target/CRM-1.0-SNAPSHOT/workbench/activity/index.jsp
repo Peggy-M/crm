@@ -92,62 +92,61 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			})
 		})
 
-		//
-		function pageList(pageNo,pageSize){
-			$.ajax({
-				url:"workbench/activity/pageList.do",
-				data:{
-					"pageNo":pageNo,
-					"pageSize":pageSize,
-					"name":$.trim($("#search-name").val()),
-					"owner":$.trim($("#search-owner").val()),
-					"startDate":$.trim($("#search-startDate").val()),
-					"endDate":$.trim($("#search-endDate").val())
-				},
-				type:"post",
-				dataType:"json",
-				success:function (data){
-					/*
-					* data
-					* 	我们需要的：
-					* 	市场活动信息列表
-					* 	[{市场活动1}，{2},{3},{4}] Lsit<Activity> alist
-					* 	一会分页查询的时候：查询出的总的记录数
-					*	{"total":100}  int total
-					*
-					*
-					* 	{"total":100,"dataList:[{市场活动1}，{2}，{3}]"}
-					*
-					* */
-
-					var html="";
-					//每一个n就是一个市场活动的对象
-					$.each(data.dataList,function (i,n){
-
-						html+='<tr class="active">';
-						html+='<td><input type="checkbox" value="'+n.id+'"/></td>';
-						html+='<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.jsp\';">'+n.name+'</a></td>';
-						html+='<td>'+n.owner+'</td>';
-						html+='<td>'+n.startDate+'</td>';
-						html+='<td>'+n.endDate+'</td>';
-						html+='</tr>';
-					})
-
-					$("#activityBody").html(html);
-				}
-			})
-
-		}
-
 		pageList(1,2);
 
 		//为查询按钮绑定事件
 		$("#searchBtn").click(function (){
 			pageList(1,2);
 		})
-
 	});
-	
+
+	function pageList(pageNo,pageSize){
+		$.ajax({
+			url:"workbench/activity/pageList.do",
+			data:{
+				"pageNo":pageNo,
+				"pageSize":pageSize,
+				"name":$.trim($("#search-name").val()),
+				"owner":$.trim($("#search-owner").val()),
+				"startDate":$.trim($("#search-startDate").val()),
+				"endDate":$.trim($("#search-endDate").val())
+			},
+			type:"get",
+			dataType:"json",
+			success:function (data){
+				/*
+                * data
+                * 	我们需要的：
+                * 	市场活动信息列表
+                * 	[{市场活动1}，{2},{3},{4}] Lsit<Activity> alist
+                * 	一会分页查询的时候：查询出的总的记录数
+                *	{"total":100}  int total
+                *
+                *
+                * 	{"total":100,"dataList:[{市场活动1}，{2}，{3}]"}
+                *
+                * */
+
+				var html="";
+				//每一个n就是一个市场活动的对象
+				$.each(data.dataList,function (i,n){
+
+					alert("===========================>"+n);
+					html+='<tr class="active">';
+					html+='<td><input type="checkbox" value="'+n.id+'"/></td>';
+					html+='<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.jsp\';">'+n.name+'</a></td>';
+					html+='<td>'+n.owner+'</td>';
+					html+='<td>'+n.startDate+'</td>';
+					html+='<td>'+n.endDate+'</td>';
+					html+='</tr>';
+
+				})
+
+				$("#activityBody").html(html);
+			}
+		})
+
+	}
 </script>
 </head>
 <body>
